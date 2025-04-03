@@ -1,6 +1,6 @@
 import base64
 def main():
-    input_string = input("Nhap thong tin cna ma hoa: ")
+    input_string = input("Nhap thong tin can ma hoa: ")
 
     encoded_bytes = base64.b64encode(input_string.encode("utf-8"))
     encoded_string = encoded_bytes.decode("utf-8")

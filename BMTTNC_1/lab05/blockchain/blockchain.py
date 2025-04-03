@@ -1,16 +1,18 @@
-from block import Block
 import hashlib
 import time 
+from block import Block
 
 class Blockchain:
     def __init__(self):
         self.chain = []
         self.current_transactions = []
+        # Tạo block đầu tiên (Genesis Block)
         self.create_block(proof=1, previous_hash='0')
 
     def create_block(self, proof, previous_hash):
+        # Tạo block mới và thêm vào chuỗi
         block = Block(len(self.chain) + 1, previous_hash, time.time(), self.current_transactions, proof)
-        self.current =_transactions = []
+        self.current_transactions = []  # Khởi tạo lại danh sách giao dịch
         self.chain.append(block)
         return block
     
@@ -21,15 +23,33 @@ class Blockchain:
         new_proof = 1
         check_proof = False
         while not check_proof:
-            hash_operation = hashlib.sha256(str(new_proof**2 - previous_proof**2).encode()).hediest()
+            # Tính hash theo công thức của proof of work
+            hash_operation = hashlib.sha256(str(new_proof**2 - previous_proof**2).encode()).hexdigest()
             if hash_operation[:4] == '0000':
-                check_proof += 1
+                check_proof = True  # Sửa lại từ check_proof += 1 thành check_proof = True
+            else:
+                new_proof += 1  # Tăng new_proof để thử lại
         return new_proof
     
     def add_transaction(self, sender, receiver, amount):
+        # Thêm giao dịch vào danh sách giao dịch
         self.current_transactions.append({'sender': sender, 'receiver': receiver, 'amount': amount})
+        # Trả về số index của block kế tiếp
         return self.get_previous_block().index + 1
      
     def is_chain_valid(self, chain):
         previous_block = chain[0]
-        block_index
+        block_index = 1
+        while block_index < len(chain):
+            block = chain[block_index]
+            # Kiểm tra hash của block trước có khớp với previous_hash của block hiện tại
+            if block.previous_hash != previous_block.hash:
+                return False
+            previous_proof = previous_block.proof
+            proof = block.proof
+            hash_operation = hashlib.sha256(str(proof**2 - previous_proof**2).encode()).hexdigest()
+            if hash_operation[:4] != '0000':  # Kiểm tra proof có hợp lệ không
+                return False
+            previous_block = block
+            block_index += 1
+        return True
